@@ -15,7 +15,6 @@ int main(int argc, char *argv[])
 {
   SDL_Window* window = NULL;
   SDL_Surface* screenSurface = NULL;
-
   if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
     printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError() );
   }
@@ -27,7 +26,7 @@ int main(int argc, char *argv[])
   }
 
   screenSurface = SDL_GetWindowSurface(window);
-  SDL_FillRect(screenSurface, NULL, SDL_MapRGB(screenSurface->format, 255, 255, 255) );
+  SDL_FillRect(screenSurface, NULL, SDL_MapRGB(screenSurface->format, 0, 0, 0) );
   SDL_UpdateWindowSurface(window);
 
   SDL_Event e;
