@@ -1,7 +1,7 @@
 TARGET = main.out
 CC = gcc
 
-CFLAGS = -lSDL2 -lSDL2main
+CFLAGS = create_object.c -lSDL2 -lSDL2main
 
 SRC = main.c
 
