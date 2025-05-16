@@ -34,7 +34,9 @@ int main(int argc, char *argv[])
     SDL_Quit();
     return EXIT_FAILURE;
   }
-
+  SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+  SDL_RenderClear(renderer);
+  SDL_RenderPresent(renderer);
 
   SDL_Event e;
   bool quit = false;
