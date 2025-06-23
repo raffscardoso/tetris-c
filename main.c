@@ -37,13 +37,6 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
   }
 
-
-  
-  create_rectangle(renderer);
-
-  SDL_SetRenderDrawColor(renderer, 0,0,0, SDL_ALPHA_OPAQUE);
-  SDL_RenderPresent(renderer); 
-
   SDL_Event e;
   bool quit = false;
   while (!quit) {
@@ -52,6 +45,12 @@ int main(int argc, char *argv[])
         quit = true;
       }
     }
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+    SDL_RenderClear(renderer);
+
+    create_rectangle(renderer);
+
+    SDL_RenderPresent(renderer);
   }
 
   SDL_DestroyRenderer(renderer);

@@ -1,6 +1,7 @@
 #ifndef CREATE_OBJECT_H
 #define CREATE_OBJECT_H 
 
+#include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 
 
