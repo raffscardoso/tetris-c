@@ -1,6 +1,10 @@
-#ifdef CREATE_OBJECT_H
+#ifndef CREATE_OBJECT_H
 #define CREATE_OBJECT_H 
 
+#include <SDL2/SDL_render.h>
 
 
-#endif 
+void create_rectangle(SDL_Renderer* renderer);
+
+
+#endif

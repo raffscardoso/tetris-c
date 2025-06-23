@@ -17,6 +17,7 @@ int main(int argc, char *argv[])
 { 
   if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
     printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError() );
+    return EXIT_FAILURE;
   }
 
 
@@ -36,13 +37,16 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
   }
 
-  SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-  SDL_RenderClear(renderer);
-  SDL_RenderPresent(renderer);
+
+  
+  create_rectangle(renderer);
+
+  SDL_SetRenderDrawColor(renderer, 0,0,0, SDL_ALPHA_OPAQUE);
+  SDL_RenderPresent(renderer); 
 
   SDL_Event e;
   bool quit = false;
-  while (quit == false) {
+  while (!quit) {
     while (SDL_PollEvent(&e)) {
       if (e.type == SDL_QUIT) {
         quit = true;
