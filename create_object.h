@@ -5,7 +5,7 @@
 #include <SDL2/SDL_render.h>
 
 
-void create_rectangle(SDL_Renderer* renderer);
+void create_rectangle(SDL_Renderer* renderer, int width, int height, int x, int y);
 
 
 #endif

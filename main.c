@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
   }
 
 
-  SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
+  SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
   if(!renderer){
     printf("Renderer creation failed! SDL_Error: %s\n", SDL_GetError() );
     SDL_DestroyWindow(window);
@@ -39,6 +39,15 @@ int main(int argc, char *argv[])
 
   SDL_Event e;
   bool quit = false;
+
+  int rectangle_width = 150;
+  int rectangle_height = 50;
+  int rectangle_x = (SCREEN_WIDTH - rectangle_width) / 2;
+  int rectangle_y = (SCREEN_HEIGHT - rectangle_height) / 2;
+
+
+
+
   while (!quit) {
     while (SDL_PollEvent(&e)) {
       if (e.type == SDL_QUIT) {
@@ -48,7 +57,7 @@ int main(int argc, char *argv[])
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(renderer);
 
-    create_rectangle(renderer);
+    create_rectangle(renderer, rectangle_width, rectangle_height, rectangle_x, rectangle_y);
 
     SDL_RenderPresent(renderer);
   }
