@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_error.h>
 #include <SDL2/SDL_events.h>
+#include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_stdinc.h>
@@ -18,6 +19,21 @@ const int WINDOW_HEIGHT = ROWS * BLOCK_SIZE;
   int x,y;
   int shape[4][4];
 } Tetromino;
+
+int check_collision(Tetromino piece, int grid[ROWS][COLS]){
+  for(int i = 0; i < 4; i++){
+    for(int j = 0; j < 4; j++){
+      if(piece.shape[i][j] == 1){
+        int pos_x_grid = piece.x + j; 
+        int pos_y_grid = piece.y + i; 
+
+        if(pos_x_grid < 0 || pos_x_grid >= COLS) return 1;
+        if(pos_y_grid >= ROWS) return 1;
+      }
+    }
+  }
+  return 0; // 0 = no collision
+}
 
 int main(int argc, char *argv[]) { 
 
@@ -123,16 +139,32 @@ int main(int argc, char *argv[]) {
       if (event.type == SDL_QUIT) {
         running = 0;
       }
+      if(event.type == SDL_KEYDOWN){
+
+        Tetromino collision_test_piece = actual_piece; //temp piece for detect collision
+        switch (event.key.keysym.sym) {
+          case SDLK_LEFT: 
+            collision_test_piece.x--;
+            break;
+          case SDLK_RIGHT:
+            collision_test_piece.x++;
+            break;
+          case SDLK_DOWN:
+            collision_test_piece.y++;
+            break;
+        }
+
+        if(!check_collision(collision_test_piece, grid)) actual_piece = collision_test_piece;
+      }
     }
-
-
 
     Uint32 actual_time = SDL_GetTicks();
     if(actual_time > last_fall_time + gravity_delay){ // gravity logic
-      actual_piece.y++;
+      Tetromino temp_gravity_piece = actual_piece;
+      temp_gravity_piece.y++;
+      if(!check_collision(temp_gravity_piece, grid)) actual_piece = temp_gravity_piece;
       last_fall_time = actual_time;
     }
-
       
     // Clear the window with background color (light gray)
     SDL_SetRenderDrawColor(renderer, 30,30,30,255);
@@ -146,7 +178,8 @@ int main(int argc, char *argv[]) {
         SDL_RenderDrawRect(renderer, &rect);
       } 
     }
-
+  
+    // Draw the actual piece and it contour
     for(int i = 0; i < 4; i++){
       for(int j = 0; j < 4; j++){
         if(actual_piece.shape[i][j] == 1){
