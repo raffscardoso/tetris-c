@@ -3,6 +3,7 @@
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
+#include <SDL2/SDL_stdinc.h>
 #include <SDL2/SDL_timer.h>
 #include <SDL2/SDL_video.h>
 #include <stdio.h>
@@ -109,6 +110,11 @@ int main(int argc, char *argv[]) {
   actual_piece.x = 3; // initial position: col 3
   actual_piece.y = 0; // initial position: row 0 (top)
 
+
+  Uint32 last_fall_time = 0;
+  const int gravity_delay = 500; // the tetromino will fall every 500ms
+  
+
   int running = 1;
   SDL_Event event;
 
@@ -118,6 +124,15 @@ int main(int argc, char *argv[]) {
         running = 0;
       }
     }
+
+
+
+    Uint32 actual_time = SDL_GetTicks();
+    if(actual_time > last_fall_time + gravity_delay){ // gravity logic
+      actual_piece.y++;
+      last_fall_time = actual_time;
+    }
+
       
     // Clear the window with background color (light gray)
     SDL_SetRenderDrawColor(renderer, 30,30,30,255);
@@ -136,10 +151,10 @@ int main(int argc, char *argv[]) {
 
     for(int i = 0; i < 4; i++){
       for(int j = 0; j < 4; j++){
-        if(pieces[3].shape[i][j] == 1){
+        if(actual_piece.shape[i][j] == 1){
           SDL_Rect piece_block = {
-            (actual_piece.x + j) * BLOCK_SIZE,
-            (actual_piece.y + i) * BLOCK_SIZE,
+            (actual_piece.x + j ) * BLOCK_SIZE,
+            (actual_piece.y + i ) * BLOCK_SIZE,
             BLOCK_SIZE,
             BLOCK_SIZE
           };
@@ -154,7 +169,6 @@ int main(int argc, char *argv[]) {
     SDL_RenderPresent(renderer);
   }
 
-  // Destroy window and Quit SDL
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   SDL_Quit();
