@@ -147,18 +147,19 @@ int main(int argc, char *argv[]) {
       } 
     }
 
-    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
-
     for(int i = 0; i < 4; i++){
       for(int j = 0; j < 4; j++){
         if(actual_piece.shape[i][j] == 1){
-          SDL_Rect piece_block = {
-            (actual_piece.x + j ) * BLOCK_SIZE,
-            (actual_piece.y + i ) * BLOCK_SIZE,
-            BLOCK_SIZE,
-            BLOCK_SIZE
-          };
+          int x = (actual_piece.x + j) * BLOCK_SIZE;
+          int y = (actual_piece.y + i) * BLOCK_SIZE;
 
+          SDL_Rect contour_rect = {x,y,BLOCK_SIZE,BLOCK_SIZE};
+          SDL_Rect piece_block = {x + 1,y + 1,BLOCK_SIZE - 2,BLOCK_SIZE - 2};
+
+          SDL_SetRenderDrawColor(renderer, 64, 64, 64, 255);
+          SDL_RenderDrawRect(renderer, &contour_rect);
+
+          SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
           SDL_RenderFillRect(renderer,&piece_block);
         }
       }
