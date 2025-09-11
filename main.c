@@ -2,15 +2,19 @@
 #include <SDL2/SDL_error.h>
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_keycode.h>
+#include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_stdinc.h>
 #include <SDL2/SDL_timer.h>
 #include <SDL2/SDL_video.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 #define COLS 10
 #define ROWS 20
+
 const int BLOCK_SIZE = 32; // 32x32 pixels for each block
 const int WINDOW_WIDTH = COLS * BLOCK_SIZE;
 const int WINDOW_HEIGHT = ROWS * BLOCK_SIZE;
@@ -32,6 +36,7 @@ void fix_piece_on_grid(Tetromino piece, int grid[ROWS][COLS]) {
     }
   }
 }
+
 int check_collision(Tetromino piece, int grid[ROWS][COLS]) {
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
@@ -51,7 +56,13 @@ int check_collision(Tetromino piece, int grid[ROWS][COLS]) {
   return 0; // 0 = no collision
 }
 
+void set_render_draw_SDL_Color(SDL_Renderer *renderer, SDL_Color *color) {
+  SDL_SetRenderDrawColor(renderer, color->r, color->g, color->b, color->a);
+}
+
 int main(int argc, char *argv[]) {
+
+  srand(time(NULL));
 
   // Initializing SDL
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -93,7 +104,7 @@ int main(int argc, char *argv[]) {
                          {0,
                           0,
                           {// piece J
-                           {1, 1, 1, 1},
+                           {1, 1, 1, 0},
                            {1, 0, 0, 0},
                            {0, 0, 0, 0},
                            {0, 0, 0, 0}}},
@@ -133,7 +144,7 @@ int main(int argc, char *argv[]) {
                            {0, 0, 0, 0},
                            {0, 0, 0, 0}}}};
 
-  Tetromino actual_piece = pieces[3];
+  Tetromino actual_piece = pieces[rand() % 7];
   actual_piece.x = 3; // initial position: col 3
   actual_piece.y = 0; // initial position: row 0 (top)
 
@@ -179,6 +190,7 @@ int main(int argc, char *argv[]) {
         actual_piece.y++;
       } else {
         fix_piece_on_grid(actual_piece, grid);
+        actual_piece = pieces[rand() % 7];
         actual_piece.x = 3;
         actual_piece.y = 0;
       }
@@ -186,7 +198,9 @@ int main(int argc, char *argv[]) {
     }
 
     // Clear the window with background color (light gray)
-    SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
+    // SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
+    SDL_Color color = {30, 30, 30, 255};
+    set_render_draw_SDL_Color(renderer, &color);
     SDL_RenderClear(renderer);
 
     // Draw the grid
