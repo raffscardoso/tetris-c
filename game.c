@@ -1,5 +1,4 @@
 #include "game.h"
-#include <stdio.h>
 
 const int BLOCK_SIZE = 32;
 const int WINDOW_WIDTH = COLS * BLOCK_SIZE;
