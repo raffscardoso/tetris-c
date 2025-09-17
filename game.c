@@ -14,56 +14,29 @@ void init_game(GameState *game) {
     }
   }
 
-  pieces[0] = (Tetromino){0,
-                          0,
-                          {{0, 1, 0, 0},
-                           {0, 1, 0, 0},
-                           {0, 1, 0, 0},
-                           {0, 1, 0, 0}}}; // I
-  pieces[1] = (Tetromino){0,
-                          0,
-                          {{1, 1, 1, 0},
-                           {1, 0, 0, 0},
-                           {0, 0, 0, 0},
-                           {0, 0, 0, 0}}}; // J
-  pieces[2] = (Tetromino){0,
-                          0,
-                          {{0, 0, 0, 1},
-                           {0, 1, 1, 1},
-                           {0, 0, 0, 0},
-                           {0, 0, 0, 0}}}; // L
-  pieces[3] = (Tetromino){0,
-                          0,
-                          {{0, 1, 1, 0},
-                           {0, 1, 1, 0},
-                           {0, 0, 0, 0},
-                           {0, 0, 0, 0}}}; // O
-  pieces[4] = (Tetromino){0,
-                          0,
-                          {{0, 0, 1, 1},
-                           {0, 1, 1, 0},
-                           {0, 0, 0, 0},
-                           {0, 0, 0, 0}}}; // S
-  pieces[5] = (Tetromino){0,
-                          0,
-                          {{0, 1, 0, 0},
-                           {1, 1, 1, 0},
-                           {0, 0, 0, 0},
-                           {0, 0, 0, 0}}}; // T
-  pieces[6] = (Tetromino){0,
-                          0,
-                          {{1, 1, 0, 0},
-                           {0, 1, 1, 0},
-                           {0, 0, 0, 0},
-                           {0, 0, 0, 0}}}; // Z
+  pieces[0] = (Tetromino){
+      0, 0, {{0, 0, 0, 0}, {1, 1, 1, 1}, {0, 0, 0, 0}, {0, 0, 0, 0}}}; // I
+  pieces[1] = (Tetromino){
+      0, 0, {{0, 0, 0, 0}, {1, 0, 0, 0}, {1, 1, 1, 0}, {0, 0, 0, 0}}}; // J
+  pieces[2] = (Tetromino){
+      0, 0, {{0, 0, 0, 0}, {0, 0, 1, 0}, {1, 1, 1, 0}, {0, 0, 0, 0}}}; // L
+  pieces[3] = (Tetromino){
+      0, 0, {{0, 0, 0, 0}, {0, 1, 1, 0}, {0, 1, 1, 0}, {0, 0, 0, 0}}}; // O
+  pieces[4] = (Tetromino){
+      0, 0, {{0, 0, 0, 0}, {0, 1, 1, 0}, {1, 1, 0, 0}, {0, 0, 0, 0}}}; // S
+  pieces[5] = (Tetromino){
+      0, 0, {{0, 0, 0, 0}, {0, 1, 0, 0}, {1, 1, 1, 0}, {0, 0, 0, 0}}}; // T
+  pieces[6] = (Tetromino){
+      0, 0, {{0, 0, 0, 0}, {1, 1, 0, 0}, {0, 1, 1, 0}, {0, 0, 0, 0}}}; // Z
+  game->running = 1;
+}
 
+void spawn_new_piece(GameState *game) {
   game->actual_piece = pieces[rand() % 7];
   game->actual_piece.x = 3;
   game->actual_piece.y = 0;
   game->last_fall_time = 0;
-  game->running = 1;
 }
-
 int check_collision(Tetromino piece, int grid[ROWS][COLS]) {
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
@@ -96,6 +69,16 @@ void fix_piece_on_grid(Tetromino piece, int grid[ROWS][COLS]) {
   }
 }
 
+void rotate_piece(Tetromino *piece) {
+  Tetromino temp = *piece;
+
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 4; j++) {
+      piece->shape[i][j] = temp.shape[3 - j][i];
+    }
+  }
+}
+
 void handle_input(GameState *game) {
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
@@ -103,20 +86,23 @@ void handle_input(GameState *game) {
       game->running = 0;
     }
     if (event.type == SDL_KEYDOWN) {
-      Tetromino collision_test_piece = game->actual_piece;
+      Tetromino test_piece = game->actual_piece;
       switch (event.key.keysym.sym) {
       case SDLK_LEFT:
-        collision_test_piece.x--;
+        test_piece.x--;
         break;
       case SDLK_RIGHT:
-        collision_test_piece.x++;
+        test_piece.x++;
         break;
       case SDLK_DOWN:
-        collision_test_piece.y++;
+        test_piece.y++;
+        break;
+      case SDLK_UP:
+        rotate_piece(&test_piece);
         break;
       }
-      if (!check_collision(collision_test_piece, game->grid)) {
-        game->actual_piece = collision_test_piece;
+      if (!check_collision(test_piece, game->grid)) {
+        game->actual_piece = test_piece;
       }
     }
   }
