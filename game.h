@@ -21,6 +21,7 @@ typedef struct {
   Tetromino actual_piece;
   Uint32 last_fall_time;
   int running;
+  int score;
 } GameState;
 
 void init_game(GameState *game);
@@ -28,5 +29,7 @@ void handle_input(GameState *game);
 void update_game(GameState *game);
 void rotate_piece(Tetromino *piece);
 void spawn_new_piece(GameState *game);
+void check_and_clear_lines(GameState *game);
+void score_calc(GameState *game, int lines_cleared);
 
 #endif // GAME_H

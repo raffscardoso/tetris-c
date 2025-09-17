@@ -1,4 +1,5 @@
 #include "game.h"
+#include <stdio.h>
 
 const int BLOCK_SIZE = 32;
 const int WINDOW_WIDTH = COLS * BLOCK_SIZE;
@@ -100,6 +101,7 @@ void handle_input(GameState *game) {
           temp.y++;
         }
         fix_piece_on_grid(game->actual_piece, game->grid);
+        check_and_clear_lines(game);
         spawn_new_piece(game);
       }
       Tetromino test_piece = game->actual_piece;
@@ -135,8 +137,48 @@ void update_game(GameState *game) {
       game->actual_piece.y++;
     } else {
       fix_piece_on_grid(game->actual_piece, game->grid);
+      check_and_clear_lines(game);
       spawn_new_piece(game);
     }
     game->last_fall_time = actual_time;
   }
+}
+
+void score_calc(GameState *game, int lines_cleared) {
+
+  if (lines_cleared == 1)
+    game->score += 100;
+  if (lines_cleared == 2)
+    game->score += 300;
+  if (lines_cleared == 3)
+    game->score += 500;
+  if (lines_cleared == 4)
+    game->score += 800;
+}
+
+void check_and_clear_lines(GameState *game) {
+  int lines_cleared = 0;
+
+  for (int i = ROWS - 1; i >= 0; i--) {
+    int line_is_full = 1;
+    for (int j = 0; j < COLS; j++) {
+      if (game->grid[i][j] == 0) {
+        line_is_full = 0;
+        break;
+      }
+    }
+    if (line_is_full) {
+      lines_cleared++;
+      for (int k = i; k > 0; k--) {
+        for (int j = 0; j < COLS; j++) {
+          game->grid[k][j] = game->grid[k - 1][j];
+        }
+      }
+
+      for (int j = 0; j < COLS; j++)
+        game->grid[0][j] = 0;
+      i++;
+    }
+  }
+  score_calc(game, lines_cleared);
 }
