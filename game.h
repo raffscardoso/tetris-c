@@ -27,5 +27,6 @@ void init_game(GameState *game);
 void handle_input(GameState *game);
 void update_game(GameState *game);
 void rotate_piece(Tetromino *piece);
+void spawn_new_piece(GameState *game);
 
 #endif // GAME_H

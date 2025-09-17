@@ -28,15 +28,13 @@ void init_game(GameState *game) {
       0, 0, {{0, 0, 0, 0}, {0, 1, 0, 0}, {1, 1, 1, 0}, {0, 0, 0, 0}}}; // T
   pieces[6] = (Tetromino){
       0, 0, {{0, 0, 0, 0}, {1, 1, 0, 0}, {0, 1, 1, 0}, {0, 0, 0, 0}}}; // Z
-  game->running = 1;
-}
 
-void spawn_new_piece(GameState *game) {
-  game->actual_piece = pieces[rand() % 7];
-  game->actual_piece.x = 3;
-  game->actual_piece.y = 0;
+  spawn_new_piece(game);
+
+  game->running = 1;
   game->last_fall_time = 0;
 }
+
 int check_collision(Tetromino piece, int grid[ROWS][COLS]) {
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
@@ -54,6 +52,15 @@ int check_collision(Tetromino piece, int grid[ROWS][COLS]) {
     }
   }
   return 0;
+}
+
+void spawn_new_piece(GameState *game) {
+  game->actual_piece = pieces[rand() % 7];
+  game->actual_piece.x = 3;
+  game->actual_piece.y = 0;
+
+  if (check_collision(game->actual_piece, game->grid))
+    game->running = 0;
 }
 
 void fix_piece_on_grid(Tetromino piece, int grid[ROWS][COLS]) {
@@ -86,6 +93,15 @@ void handle_input(GameState *game) {
       game->running = 0;
     }
     if (event.type == SDL_KEYDOWN) {
+      if (event.key.keysym.sym == SDLK_z) {
+        Tetromino temp = game->actual_piece;
+        while (!check_collision(temp, game->grid)) {
+          game->actual_piece = temp;
+          temp.y++;
+        }
+        fix_piece_on_grid(game->actual_piece, game->grid);
+        spawn_new_piece(game);
+      }
       Tetromino test_piece = game->actual_piece;
       switch (event.key.keysym.sym) {
       case SDLK_LEFT:
@@ -119,9 +135,7 @@ void update_game(GameState *game) {
       game->actual_piece.y++;
     } else {
       fix_piece_on_grid(game->actual_piece, game->grid);
-      game->actual_piece = pieces[rand() % 7];
-      game->actual_piece.x = 3;
-      game->actual_piece.y = 0;
+      spawn_new_piece(game);
     }
     game->last_fall_time = actual_time;
   }
