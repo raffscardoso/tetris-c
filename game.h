@@ -14,6 +14,7 @@ extern const int WINDOW_HEIGHT;
 typedef struct {
   int x, y;
   int shape[4][4];
+  int color;
 } Tetromino;
 
 typedef struct {

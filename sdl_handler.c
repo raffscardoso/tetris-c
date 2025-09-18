@@ -2,6 +2,17 @@
 #include "game.h"
 #include <stdio.h>
 
+SDL_Color tetromino_colors[] = {
+    {0, 0, 0, 255},     {0, 255, 255, 255}, // I piece (Cyan)
+    {0, 0, 128, 255},                       // J piece (BLue)
+    {255, 165, 0, 255},                     // L piece (orange)
+    {255, 255, 0, 255},                     // O piece (yellow)
+    {0, 128, 0, 255},                       // S piece (green)
+    {128, 0, 128, 255},                     // T piece (purple)
+    {255, 0, 0, 255}                        // Z piece (red)
+
+};
+
 int init_sdl(SDL_Handler *sdl_handler) {
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
     printf("Error on initializing SDL: %s\n", SDL_GetError());
@@ -58,7 +69,8 @@ void render(SDL_Handler *sdl_handler, GameState *game) {
         SDL_SetRenderDrawColor(sdl_handler->renderer, 64, 64, 64, 255);
         SDL_RenderDrawRect(sdl_handler->renderer, &contour_rect);
 
-        SDL_SetRenderDrawColor(sdl_handler->renderer, 255, 255, 0, 255);
+        set_render_draw_SDL_Color(sdl_handler->renderer,
+                                  &tetromino_colors[game->actual_piece.color]);
         SDL_RenderFillRect(sdl_handler->renderer, &piece_block);
       }
     }
