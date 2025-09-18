@@ -76,12 +76,13 @@ void render(SDL_Handler *sdl_handler, GameState *game) {
     }
   }
 
-  SDL_SetRenderDrawColor(sdl_handler->renderer, 200, 200, 200, 255);
   for (int i = 0; i < ROWS; i++) {
     for (int j = 0; j < COLS; j++) {
       if (game->grid[i][j] != 0) {
         SDL_Rect fixed_block = {j * BLOCK_SIZE, i * BLOCK_SIZE, BLOCK_SIZE,
                                 BLOCK_SIZE};
+        set_render_draw_SDL_Color(sdl_handler->renderer,
+                                  &tetromino_colors[game->grid[i][j]]);
         SDL_RenderFillRect(sdl_handler->renderer, &fixed_block);
       }
     }
