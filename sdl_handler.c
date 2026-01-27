@@ -1,6 +1,8 @@
 #include "sdl_handler.h"
 #include "game.h"
+#include "font.h"
 #include <stdio.h>
+#include <string.h>
 
 SDL_Color tetromino_colors[] = {
     {0, 0, 0, 255},     {0, 255, 255, 255}, // I piece (Cyan)
@@ -10,7 +12,6 @@ SDL_Color tetromino_colors[] = {
     {0, 128, 0, 255},                       // S piece (green)
     {128, 0, 128, 255},                     // T piece (purple)
     {255, 0, 0, 255}                        // Z piece (red)
-
 };
 
 int init_sdl(SDL_Handler *sdl_handler) {
@@ -44,11 +45,7 @@ void set_render_draw_SDL_Color(SDL_Renderer *renderer, SDL_Color *color) {
   SDL_SetRenderDrawColor(renderer, color->r, color->g, color->b, color->a);
 }
 
-void render(SDL_Handler *sdl_handler, GameState *game) {
-  SDL_Color color = {30, 30, 30, 255};
-  set_render_draw_SDL_Color(sdl_handler->renderer, &color);
-  SDL_RenderClear(sdl_handler->renderer);
-
+void render_game(SDL_Handler *sdl_handler, GameState *game) {
   SDL_SetRenderDrawColor(sdl_handler->renderer, 80, 80, 80, 255);
   for (int i = 0; i < ROWS; i++) {
     for (int j = 0; j < COLS; j++) {
@@ -86,6 +83,89 @@ void render(SDL_Handler *sdl_handler, GameState *game) {
         SDL_RenderFillRect(sdl_handler->renderer, &fixed_block);
       }
     }
+  }
+  
+  // Draw score
+  char score_text[32];
+  sprintf(score_text, "SCORE %d", game->score);
+  SDL_Color white = {255, 255, 255, 255};
+  draw_string(sdl_handler->renderer, 10, 10, score_text, 2, white);
+}
+
+void render_menu(SDL_Handler *sdl_handler, GameState *game) {
+    SDL_Color white = {255, 255, 255, 255};
+    SDL_Color selected = {255, 255, 0, 255}; // Yellow
+    SDL_Color dim = {150, 150, 150, 255};
+
+    int scale = 4;
+    int center_x = WINDOW_WIDTH / 2 - (5 * 4 * scale) / 2; // Approx center
+    int start_y = 150;
+
+    draw_string(sdl_handler->renderer, center_x - 20, 50, "TETRIS", 6, white);
+
+    draw_string(sdl_handler->renderer, center_x, start_y, "START", scale, game->menu_option == 0 ? selected : dim);
+    draw_string(sdl_handler->renderer, center_x, start_y + 80, "SCORES", scale, game->menu_option == 1 ? selected : dim);
+    draw_string(sdl_handler->renderer, center_x, start_y + 160, "EXIT", scale, game->menu_option == 2 ? selected : dim);
+}
+
+void render_highscores(SDL_Handler *sdl_handler, GameState *game) {
+    SDL_Color white = {255, 255, 255, 255};
+    SDL_Color red = {255, 0, 0, 255};
+    
+    draw_string(sdl_handler->renderer, 40, 50, "HIGH SCORES", 4, red);
+
+    int *scores = get_high_scores();
+    int count = get_high_score_count();
+
+    for (int i = 0; i < count; i++) {
+        char score_text[32];
+        sprintf(score_text, "%d %d", i + 1, scores[i]);
+        draw_string(sdl_handler->renderer, 60, 150 + i * 50, score_text, 3, white);
+    }
+    
+    draw_string(sdl_handler->renderer, 60, 500, "PRESS ENTER", 2, white);
+}
+
+void render_gameover(SDL_Handler *sdl_handler, GameState *game) {
+    render_game(sdl_handler, game); // Draw background game
+
+    // Overlay
+    SDL_SetRenderDrawBlendMode(sdl_handler->renderer, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(sdl_handler->renderer, 0, 0, 0, 200);
+    SDL_Rect overlay = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
+    SDL_RenderFillRect(sdl_handler->renderer, &overlay);
+    SDL_SetRenderDrawBlendMode(sdl_handler->renderer, SDL_BLENDMODE_NONE);
+
+    SDL_Color red = {255, 0, 0, 255};
+    SDL_Color white = {255, 255, 255, 255};
+
+    draw_string(sdl_handler->renderer, 40, 200, "GAME OVER", 5, red);
+    
+    char score_text[32];
+    sprintf(score_text, "SCORE %d", game->score);
+    draw_string(sdl_handler->renderer, 60, 300, score_text, 3, white);
+    
+    draw_string(sdl_handler->renderer, 60, 400, "PRESS ENTER", 2, white);
+}
+
+void render(SDL_Handler *sdl_handler, GameState *game) {
+  SDL_Color color = {30, 30, 30, 255};
+  set_render_draw_SDL_Color(sdl_handler->renderer, &color);
+  SDL_RenderClear(sdl_handler->renderer);
+
+  switch (game->state) {
+      case MENU:
+          render_menu(sdl_handler, game);
+          break;
+      case PLAYING:
+          render_game(sdl_handler, game);
+          break;
+      case HIGHSCORES:
+          render_highscores(sdl_handler, game);
+          break;
+      case GAME_OVER:
+          render_gameover(sdl_handler, game);
+          break;
   }
 
   SDL_RenderPresent(sdl_handler->renderer);

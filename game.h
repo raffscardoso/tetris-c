@@ -17,12 +17,21 @@ typedef struct {
   int color;
 } Tetromino;
 
+typedef enum {
+    MENU,
+    PLAYING,
+    HIGHSCORES,
+    GAME_OVER
+} State;
+
 typedef struct {
   int grid[ROWS][COLS];
   Tetromino actual_piece;
   Uint32 last_fall_time;
   int running;
   int score;
+  State state;
+  int menu_option; // 0: Start, 1: Scores, 2: Exit
 } GameState;
 
 void init_game(GameState *game);
@@ -32,5 +41,9 @@ void rotate_piece(Tetromino *piece);
 void spawn_new_piece(GameState *game);
 void check_and_clear_lines(GameState *game);
 void score_calc(GameState *game, int lines_cleared);
+
+void save_high_score(int score);
+int* get_high_scores();
+int get_high_score_count();
 
 #endif // GAME_H
