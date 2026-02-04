@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Tetris C</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div class="game-container">
+      <div class="emscripten_border">
+        <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
+      </div>
+      
+      <div class="controls">
+        <h2>Controls</h2>
+        
+        <div class="key-group">
+          <div class="key-title">Gameplay</div>
+          <div class="key-item">
+            <span>Move</span>
+            <span><span class="key">←</span> <span class="key">→</span></span>
+          </div>
+          <div class="key-item">
+            <span>Rotate</span>
+            <span class="key">↑</span>
+          </div>
+          <div class="key-item">
+            <span>Soft Drop</span>
+            <span class="key">↓</span>
+          </div>
+          <div class="key-item">
+            <span>Hard Drop</span>
+            <span class="key">Z</span>
+          </div>
+          <div class="key-item">
+            <span>Pause / Menu</span>
+            <span class="key">Esc</span>
+          </div>
+        </div>
+
+        <div class="key-group">
+          <div class="key-title">Menu</div>
+          <div class="key-item">
+            <span>Navigate</span>
+            <span><span class="key">↑</span> <span class="key">↓</span></span>
+          </div>
+          <div class="key-item">
+            <span>Select</span>
+            <span class="key">Enter</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div id="status">Loading...</div>
+
+    <script type="text/javascript" src="web_script.js"></script>
+    {{{ SCRIPT }}}
+  </body>
+</html>

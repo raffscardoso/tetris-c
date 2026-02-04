@@ -1,2 +1,7 @@
 .out
 tetris
+
+# WebAssembly Build Artifacts
+index.html
+index.js
+index.wasm

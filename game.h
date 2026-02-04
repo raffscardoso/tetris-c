@@ -20,6 +20,7 @@ typedef struct {
 typedef enum {
     MENU,
     PLAYING,
+    PAUSED,
     HIGHSCORES,
     GAME_OVER
 } State;
@@ -31,7 +32,8 @@ typedef struct {
   int running;
   int score;
   State state;
-  int menu_option; // 0: Start, 1: Scores, 2: Exit
+  int menu_option; 
+  int pause_option; // 0: Resume, 1: Quit 
 } GameState;
 
 void init_game(GameState *game);

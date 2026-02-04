@@ -70,7 +70,6 @@ int get_high_score_count() {
 }
 
 // Game Logic
-
 void reset_grid(GameState *game) {
     for (int i = 0; i < ROWS; i++) {
         for (int j = 0; j < COLS; j++) {
@@ -104,6 +103,7 @@ void init_game(GameState *game) {
   game->last_fall_time = 0;
   game->state = MENU;
   game->menu_option = 0;
+  game->pause_option = 0;
 }
 
 int check_collision(Tetromino piece, int grid[ROWS][COLS]) {
@@ -198,6 +198,24 @@ void handle_input(GameState *game) {
             if (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_RETURN) {
                 game->state = MENU;
             }
+        } else if (game->state == PAUSED) {
+            switch (event.key.keysym.sym) {
+                case SDLK_UP:
+                case SDLK_DOWN:
+                    game->pause_option = !game->pause_option; // switch the selection in pause menu
+                    break;
+                case SDLK_RETURN:
+                case SDLK_KP_ENTER:
+                    if (game->pause_option == 0) { // Resume
+                        game->state = PLAYING;
+                    } else { // Quit 
+                        game->state = MENU;
+                    }
+                    break;
+                case SDLK_ESCAPE:
+                    game->state = PLAYING; // Resume
+                    break;
+            }
         } else if (game->state == GAME_OVER) {
             if (event.key.keysym.sym == SDLK_RETURN || event.key.keysym.sym == SDLK_ESCAPE) {
                 game->state = MENU;
@@ -228,8 +246,9 @@ void handle_input(GameState *game) {
             case SDLK_UP:
                 rotate_piece(&test_piece);
                 break;
-            case SDLK_ESCAPE: // goes back to menu
-                game->state = MENU; // TODO: Pause menu
+            case SDLK_ESCAPE: 
+                game->state = PAUSED;
+                game->pause_option = 0;
                 break;
             }
             

@@ -22,3 +22,9 @@ font.o: font.c font.h
 
 clean:
 	rm -f *.o $(EXEC)
+
+web:
+	bash -c "source /home/raffscardoso/emsdk/emsdk_env.sh && emcc main_emscripten.c game.c sdl_handler.c font.c -s USE_SDL=2 -o index.html --shell-file shell_template.html"
+
+clean-web:
+	rm -f index.html index.js index.wasm

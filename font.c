@@ -113,3 +113,17 @@ void draw_string(SDL_Renderer *renderer, int x, int y, const char *text, int sca
         text++;
     }
 }
+
+int get_string_width(const char *text, int scale) {
+    int width = 0;
+    while (*text) {
+        if (*text == ' ') {
+            width += 4 * scale;
+        } else {
+            width += 5 * scale;
+        }
+        text++;
+    }
+
+    return width;
+}
